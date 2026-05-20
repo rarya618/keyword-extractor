@@ -1,0 +1,156 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-mono: var(--font-plex-mono);
+  --font-sans: var(--font-dm-sans);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background-color: #09090c;
+  color: #e8e3d8;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Dot grid texture */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Radial vignette — top fade */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse 110% 55% at 50% 0%, transparent 25%, #09090c 82%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+main {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes chipPop {
+  from {
+    opacity: 0;
+    transform: scale(0.78);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes amberPulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.anim-fade-up {
+  animation: fadeUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.anim-category {
+  animation: fadeUp 0.48s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.anim-chip {
+  animation: chipPop 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.amber-pulse {
+  animation: amberPulse 2.8s ease-in-out infinite;
+}
+
+/* Responsive layout */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.app-sidebar {
+  width: 340px;
+  min-width: 340px;
+  border-right: 1px solid #22222e;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  z-index: 2;
+}
+
+.app-main {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+
+.app-main-inner {
+  max-width: 760px;
+  padding: 64px 48px 96px;
+}
+
+.app-main-inner--results {
+  padding-top: 0;
+}
+
+@media (max-width: 768px) {
+  .app-layout {
+    flex-direction: column;
+  }
+
+  .app-sidebar {
+    width: 100%;
+    min-width: unset;
+    position: static;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid #22222e;
+  }
+
+  .app-main-inner {
+    padding: 40px 24px 64px;
+  }
+
+  .app-main-inner--results {
+    padding-top: 24px;
+  }
+
+  .category-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
