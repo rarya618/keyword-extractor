@@ -8,6 +8,7 @@ import { makeSnippet, saveAnalysis, loadAnalyses, type Analysis } from "@/lib/an
 import JobInput from "@/components/JobInput"
 import ResultsPanel, { type KeywordResult } from "@/components/ResultsPanel"
 import AnalysisHistory from "@/components/AnalysisHistory"
+import ResumeScorer from "@/components/ResumeScorer"
 
 export default function Home() {
   const [uid, setUid] = useState<string | null>(null)
@@ -195,6 +196,50 @@ export default function Home() {
           )}
         </div>
       </main>
+
+      {/* Resume scorer column */}
+      <aside className="app-resume">
+        <div
+          style={{
+            padding: "16px 24px",
+            borderBottom: "1px solid #22222e",
+            flexShrink: 0,
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "var(--font-plex-mono)",
+              fontSize: "11px",
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color: "#7878a0",
+            }}
+          >
+            Resume Score
+          </span>
+        </div>
+
+        <div style={{ padding: "24px" }}>
+          {keywords ? (
+            <ResumeScorer keywords={keywords} />
+          ) : (
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <div style={{ width: "6px", height: "6px", borderRadius: "50%", backgroundColor: "#3a3a50", flexShrink: 0 }} />
+              <p
+                style={{
+                  fontFamily: "var(--font-plex-mono)",
+                  fontSize: "11px",
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  color: "#3a3a50",
+                }}
+              >
+                Extract keywords first
+              </p>
+            </div>
+          )}
+        </div>
+      </aside>
     </div>
   )
 }
