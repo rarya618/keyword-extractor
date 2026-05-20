@@ -23,22 +23,36 @@ export default function KeywordChip({ keyword, colors, animDelay }: KeywordChipP
     <button
       onClick={handleClick}
       className="anim-chip"
+      onMouseEnter={(e) => {
+        if (!copied) {
+          const el = e.currentTarget as HTMLButtonElement
+          el.style.backgroundColor = colors.chipBg.replace("0.12", "0.22")
+          el.style.borderColor = colors.accent + "80"
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!copied) {
+          const el = e.currentTarget as HTMLButtonElement
+          el.style.backgroundColor = colors.chipBg
+          el.style.borderColor = colors.chipBorder
+        }
+      }}
       style={{
         animationDelay: `${animDelay}ms`,
         display: "inline-flex",
         alignItems: "center",
         gap: "5px",
-        padding: "4px 10px",
+        padding: "5px 12px",
         borderRadius: "5px",
         fontSize: "12px",
-        fontFamily: "var(--font-plex-mono)",
-        fontWeight: 400,
+        fontFamily: "var(--font-poppins)",
+        fontWeight: 500,
         cursor: "pointer",
         transition: "background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease",
         backgroundColor: copied ? colors.accent : colors.chipBg,
         border: `1px solid ${copied ? colors.accent : colors.chipBorder}`,
-        color: copied ? "#09090c" : colors.chipText,
-        transform: copied ? "scale(0.95)" : "scale(1)",
+        color: copied ? "#07070a" : colors.chipText,
+        transform: copied ? "scale(0.96)" : "scale(1)",
         userSelect: "none",
       }}
     >

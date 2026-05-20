@@ -31,50 +31,50 @@ const CATEGORIES: {
     key: "technicalSkills",
     title: "Technical Skills",
     colors: {
-      accent: "#5a9fe8",
-      chipBg: "rgba(90, 159, 232, 0.1)",
-      chipBorder: "rgba(90, 159, 232, 0.35)",
-      chipText: "#90c4ff",
+      accent: "#5fa8f0",
+      chipBg: "rgba(95, 168, 240, 0.12)",
+      chipBorder: "rgba(95, 168, 240, 0.28)",
+      chipText: "#98ccff",
     },
   },
   {
     key: "requiredQualifications",
     title: "Required",
     colors: {
-      accent: "#e06060",
-      chipBg: "rgba(224, 96, 96, 0.1)",
-      chipBorder: "rgba(224, 96, 96, 0.35)",
-      chipText: "#f09898",
+      accent: "#e86868",
+      chipBg: "rgba(232, 104, 104, 0.12)",
+      chipBorder: "rgba(232, 104, 104, 0.28)",
+      chipText: "#f4a8a8",
     },
   },
   {
     key: "softSkills",
     title: "Soft Skills",
     colors: {
-      accent: "#a888e8",
-      chipBg: "rgba(168, 136, 232, 0.1)",
-      chipBorder: "rgba(168, 136, 232, 0.35)",
-      chipText: "#c8aaff",
+      accent: "#b090f0",
+      chipBg: "rgba(176, 144, 240, 0.12)",
+      chipBorder: "rgba(176, 144, 240, 0.28)",
+      chipText: "#ccb4ff",
     },
   },
   {
     key: "niceToHave",
     title: "Nice to Have",
     colors: {
-      accent: "#50c07a",
-      chipBg: "rgba(80, 192, 122, 0.1)",
-      chipBorder: "rgba(80, 192, 122, 0.35)",
-      chipText: "#7edad8",
+      accent: "#52c87e",
+      chipBg: "rgba(82, 200, 126, 0.12)",
+      chipBorder: "rgba(82, 200, 126, 0.28)",
+      chipText: "#84e4a8",
     },
   },
   {
     key: "industryDomain",
     title: "Industry / Domain",
     colors: {
-      accent: "#e08844",
-      chipBg: "rgba(224, 136, 68, 0.1)",
-      chipBorder: "rgba(224, 136, 68, 0.35)",
-      chipText: "#f0b070",
+      accent: "#e89050",
+      chipBg: "rgba(232, 144, 80, 0.12)",
+      chipBorder: "rgba(232, 144, 80, 0.28)",
+      chipText: "#f4b880",
     },
   },
 ]
@@ -103,11 +103,11 @@ export default function ResultsPanel({ keywords }: ResultsPanelProps) {
         <div>
           <p
             style={{
-              fontFamily: "var(--font-plex-mono)",
-              fontSize: "10px",
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-              color: "#62627a",
+              fontFamily: "var(--font-poppins)",
+              fontSize: "22px",
+              fontWeight: 600,
+              letterSpacing: "-0.02em",
+              color: "#ede8dd",
               marginBottom: "6px",
             }}
           >
@@ -116,11 +116,11 @@ export default function ResultsPanel({ keywords }: ResultsPanelProps) {
           <div className="flex items-baseline gap-3">
             <span
               style={{
-                fontFamily: "var(--font-dm-sans)",
-                fontSize: "2.4rem",
-                fontWeight: 300,
-                letterSpacing: "-0.03em",
-                color: "#e8e3d8",
+                fontFamily: "var(--font-poppins)",
+                fontSize: "3rem",
+                fontWeight: 600,
+                letterSpacing: "-0.04em",
+                color: "#ede8dd",
                 lineHeight: 1,
               }}
             >
@@ -128,10 +128,10 @@ export default function ResultsPanel({ keywords }: ResultsPanelProps) {
             </span>
             <span
               style={{
-                fontFamily: "var(--font-dm-sans)",
-                fontSize: "1rem",
-                fontWeight: 300,
-                color: "#7878a0",
+                fontFamily: "var(--font-poppins)",
+                fontSize: "15px",
+                fontWeight: 400,
+                color: "#55556e",
               }}
             >
               terms identified
@@ -145,27 +145,28 @@ export default function ResultsPanel({ keywords }: ResultsPanelProps) {
             display: "flex",
             alignItems: "center",
             gap: "7px",
-            padding: "8px 14px",
-            border: "1px solid #2e2e3c",
-            borderRadius: "7px",
+            padding: "8px 16px",
+            border: "1px solid #2a2a3a",
+            borderRadius: "6px",
             backgroundColor: "transparent",
-            fontFamily: "var(--font-plex-mono)",
-            fontSize: "11px",
-            letterSpacing: "0.1em",
-            color: copied ? "#50c07a" : "#7878a0",
+            fontFamily: "var(--font-poppins)",
+            fontSize: "10px",
+            fontWeight: 500,
+            letterSpacing: "0",
+            color: copied ? "#84e4a8" : "#55556e",
             cursor: "pointer",
             transition: "color 0.15s ease, border-color 0.15s ease",
           }}
           onMouseEnter={(e) => {
             if (!copied) {
-              ;(e.currentTarget as HTMLButtonElement).style.color = "#e8e3d8"
-              ;(e.currentTarget as HTMLButtonElement).style.borderColor = "#4a4a62"
+              ;(e.currentTarget as HTMLButtonElement).style.color = "#ede8dd"
+              ;(e.currentTarget as HTMLButtonElement).style.borderColor = "#3a3a50"
             }
           }}
           onMouseLeave={(e) => {
             if (!copied) {
-              ;(e.currentTarget as HTMLButtonElement).style.color = "#7878a0"
-              ;(e.currentTarget as HTMLButtonElement).style.borderColor = "#2e2e3c"
+              ;(e.currentTarget as HTMLButtonElement).style.color = "#55556e"
+              ;(e.currentTarget as HTMLButtonElement).style.borderColor = "#2a2a3a"
             }
           }}
         >
@@ -193,7 +194,7 @@ export default function ResultsPanel({ keywords }: ResultsPanelProps) {
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(2, 1fr)",
-          gap: "14px",
+          gap: "16px",
         }}
       >
         {CATEGORIES.map(({ key, title, colors }, idx) => (

@@ -4,9 +4,9 @@ import { useState } from "react"
 
 const MAX_CHARS = 15000
 
-const BORDER_DEFAULT = "1px solid #22222e"
-const BORDER_FOCUS = "1px solid #c28a28"
-const INPUT_BG = "#0d0d11"
+const BORDER_DEFAULT = "1px solid #1e1e2a"
+const BORDER_FOCUS = "1px solid #5fa8f0"
+const INPUT_BG = "#0c0c10"
 
 interface JobInputProps {
   onSubmit: (payload: { jobListing?: string; url?: string }) => void
@@ -37,7 +37,7 @@ export default function JobInput({ onSubmit, loading, error }: JobInputProps) {
       {/* Mode toggle */}
       <div
         className="flex mb-5 overflow-hidden"
-        style={{ border: "1px solid #22222e", borderRadius: "8px", width: "100%" }}
+        style={{ border: "1px solid #1e1e2a", borderRadius: "6px", width: "100%", backgroundColor: INPUT_BG }}
       >
         {(["paste", "url"] as const).map((m, i) => (
           <button
@@ -47,14 +47,14 @@ export default function JobInput({ onSubmit, loading, error }: JobInputProps) {
               flex: 1,
               padding: "8px 20px",
               fontSize: "13px",
-              fontFamily: "var(--font-dm-sans)",
-              fontWeight: mode === m ? 500 : 400,
-              backgroundColor: mode === m ? "#c28a28" : "#0d0d11",
-              color: mode === m ? "#09090c" : "#9090a8",
+              fontFamily: "var(--font-poppins)",
+              fontWeight: mode === m ? 600 : 500,
+              backgroundColor: mode === m ? "#5fa8f0" : INPUT_BG,
+              color: mode === m ? "#07070a" : "#55556e",
               transition: "background-color 0.15s ease, color 0.15s ease",
               cursor: "pointer",
               border: "none",
-              borderLeft: i > 0 ? "1px solid #22222e" : "none",
+              borderLeft: i > 0 ? "1px solid #1e1e2a" : "none",
             }}
           >
             {m === "paste" ? "Paste text" : "From URL"}
@@ -66,7 +66,7 @@ export default function JobInput({ onSubmit, loading, error }: JobInputProps) {
         <>
           <textarea
             rows={10}
-            placeholder="Paste the full job listing here — title, responsibilities, requirements..."
+            placeholder="Paste the full job listing here: title, responsibilities, requirements..."
             value={jobText}
             onChange={(e) => setJobText(e.target.value.slice(0, MAX_CHARS))}
             disabled={loading}
@@ -76,26 +76,26 @@ export default function JobInput({ onSubmit, loading, error }: JobInputProps) {
               width: "100%",
               backgroundColor: INPUT_BG,
               border: focusedField === "textarea" ? BORDER_FOCUS : BORDER_DEFAULT,
-              borderRadius: "10px",
+              borderRadius: "8px",
               padding: "16px",
-              fontSize: "13px",
-              fontFamily: "var(--font-dm-sans)",
-              color: "#e8e3d8",
-              lineHeight: 1.75,
+              fontSize: "14px",
+              fontFamily: "var(--font-poppins)",
+              color: "#ede8dd",
+              lineHeight: 1.7,
               resize: "none",
               outline: "none",
               transition: "border-color 0.15s ease",
               boxShadow: focusedField === "textarea"
-                ? "0 0 0 3px rgba(194, 138, 40, 0.1)"
+                ? "0 0 0 3px rgba(95, 168, 240, 0.1)"
                 : "none",
             }}
           />
           <div style={{ marginTop: "10px" }}>
             <span
               style={{
-                fontFamily: "var(--font-plex-mono)",
+                fontFamily: "var(--font-poppins)",
                 fontSize: "11px",
-                color: jobText.length >= MAX_CHARS ? "#d45252" : "#62627a",
+                color: jobText.length >= MAX_CHARS ? "#e86868" : "#55556e",
                 display: "block",
                 marginBottom: "12px",
               }}
@@ -121,15 +121,15 @@ export default function JobInput({ onSubmit, loading, error }: JobInputProps) {
                 width: "100%",
                 backgroundColor: INPUT_BG,
                 border: focusedField === "url" ? BORDER_FOCUS : BORDER_DEFAULT,
-                borderRadius: "10px",
+                borderRadius: "8px",
                 padding: "12px 16px",
-                fontSize: "13px",
-                fontFamily: "var(--font-dm-sans)",
-                color: "#e8e3d8",
+                fontSize: "14px",
+                fontFamily: "var(--font-poppins)",
+                color: "#ede8dd",
                 outline: "none",
                 transition: "border-color 0.15s ease",
                 boxShadow: focusedField === "url"
-                  ? "0 0 0 3px rgba(194, 138, 40, 0.1)"
+                  ? "0 0 0 3px rgba(95, 168, 240, 0.1)"
                   : "none",
               }}
             />
@@ -138,9 +138,9 @@ export default function JobInput({ onSubmit, loading, error }: JobInputProps) {
           <p
             style={{
               marginTop: "10px",
-              fontFamily: "var(--font-plex-mono)",
+              fontFamily: "var(--font-poppins)",
               fontSize: "11px",
-              color: "#62627a",
+              color: "#55556e",
             }}
           >
             ↳ Works best with Greenhouse, Lever, Workday, and similar ATS pages
@@ -152,17 +152,17 @@ export default function JobInput({ onSubmit, loading, error }: JobInputProps) {
         <div
           style={{
             marginTop: "16px",
-            border: "1px solid rgba(212, 82, 82, 0.35)",
-            backgroundColor: "rgba(212, 82, 82, 0.08)",
-            borderRadius: "8px",
+            border: "1px solid rgba(232, 104, 104, 0.3)",
+            backgroundColor: "rgba(232, 104, 104, 0.07)",
+            borderRadius: "6px",
             padding: "12px 16px",
           }}
         >
           <p
             style={{
-              fontFamily: "var(--font-plex-mono)",
-              fontSize: "12px",
-              color: "#e07070",
+              fontFamily: "var(--font-poppins)",
+              fontSize: "13px",
+              color: "#f4a8a8",
             }}
           >
             {error}
@@ -195,17 +195,18 @@ function SubmitButton({
         gap: "8px",
         padding: "10px 22px",
         width: fullWidth ? "100%" : undefined,
-        borderRadius: "10px",
-        fontSize: "13px",
-        fontFamily: "var(--font-dm-sans)",
-        fontWeight: 500,
+        borderRadius: "8px",
+        fontSize: "14px",
+        fontFamily: "var(--font-poppins)",
+        fontWeight: 600,
+        letterSpacing: "0",
         whiteSpace: "nowrap",
         transition: "all 0.15s ease",
         cursor: canSubmit ? "pointer" : "not-allowed",
-        backgroundColor: canSubmit ? "#c28a28" : "#0d0d11",
-        color: canSubmit ? "#09090c" : "#4a4a62",
-        border: canSubmit ? "1px solid #c28a28" : "1px solid #22222e",
-        boxShadow: canSubmit ? "0 0 32px rgba(194, 138, 40, 0.22)" : "none",
+        backgroundColor: canSubmit ? "#5fa8f0" : "#0c0c10",
+        color: canSubmit ? "#07070a" : "#32324a",
+        border: canSubmit ? "1px solid #5fa8f0" : "1px solid #1e1e2a",
+        boxShadow: canSubmit ? "0 0 28px rgba(95, 168, 240, 0.18)" : "none",
       }}
     >
       {loading ? (

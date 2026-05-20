@@ -27,17 +27,17 @@ interface ResumeScorerProps {
 }
 
 const CATEGORY_META: { key: keyof KeywordResult; label: string; accent: string }[] = [
-  { key: "requiredQualifications", label: "Required", accent: "#e06060" },
-  { key: "technicalSkills", label: "Technical Skills", accent: "#5a9fe8" },
-  { key: "softSkills", label: "Soft Skills", accent: "#a888e8" },
-  { key: "niceToHave", label: "Nice to Have", accent: "#50c07a" },
-  { key: "industryDomain", label: "Industry / Domain", accent: "#e08844" },
+  { key: "requiredQualifications", label: "Required", accent: "#e86868" },
+  { key: "technicalSkills", label: "Technical Skills", accent: "#5fa8f0" },
+  { key: "softSkills", label: "Soft Skills", accent: "#b090f0" },
+  { key: "niceToHave", label: "Nice to Have", accent: "#52c87e" },
+  { key: "industryDomain", label: "Industry / Domain", accent: "#e89050" },
 ]
 
 function scoreColor(score: number): string {
-  if (score >= 75) return "#50c07a"
-  if (score >= 50) return "#c28a28"
-  return "#e06060"
+  if (score >= 75) return "#52c87e"
+  if (score >= 50) return "#e89050"
+  return "#e86868"
 }
 
 function formatBytes(bytes: number): string {
@@ -119,12 +119,12 @@ export default function ResumeScorer({ keywords }: ResumeScorerProps) {
         <div
           style={{
             padding: "12px 16px",
-            borderRadius: "8px",
-            border: "1px solid rgba(212, 82, 82, 0.35)",
-            backgroundColor: "rgba(212, 82, 82, 0.08)",
-            fontFamily: "var(--font-dm-sans)",
-            fontSize: "14px",
-            color: "#f09898",
+            borderRadius: "6px",
+            border: "1px solid rgba(232, 104, 104, 0.3)",
+            backgroundColor: "rgba(232, 104, 104, 0.07)",
+            fontFamily: "var(--font-poppins)",
+            fontSize: "13px",
+            color: "#f4a8a8",
             marginBottom: "16px",
           }}
         >
@@ -141,8 +141,8 @@ export default function ResumeScorer({ keywords }: ResumeScorerProps) {
             gap: "14px",
             padding: "24px",
             borderRadius: "10px",
-            backgroundColor: "#0d0d11",
-            border: "1px solid #22222e",
+            backgroundColor: "#0c0c10",
+            border: "1px solid #1e1e2a",
           }}
         >
           <svg
@@ -150,7 +150,7 @@ export default function ResumeScorer({ keywords }: ResumeScorerProps) {
             height="18"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#c28a28"
+            stroke="#5fa8f0"
             strokeWidth="2"
             strokeLinecap="round"
             style={{ animation: "spin 0.9s linear infinite", flexShrink: 0 }}
@@ -161,9 +161,9 @@ export default function ResumeScorer({ keywords }: ResumeScorerProps) {
           </svg>
           <span
             style={{
-              fontFamily: "var(--font-dm-sans)",
+              fontFamily: "var(--font-poppins)",
               fontSize: "14px",
-              color: "#7878a0",
+              color: "#8a8aa8",
             }}
           >
             Analyzing your resume...
@@ -180,10 +180,10 @@ export default function ResumeScorer({ keywords }: ResumeScorerProps) {
             onDrop={handleDrop}
             onClick={() => !file && inputRef.current?.click()}
             style={{
-              border: isDragging ? "2px dashed #c28a28" : file ? "1px solid #2e2e3c" : "1px dashed #2e2e3c",
+              border: isDragging ? "2px dashed #5fa8f0" : file ? "1px solid #2a2a3a" : "1.5px dashed #2a2a3a",
               borderRadius: "10px",
-              backgroundColor: isDragging ? "rgba(194, 138, 40, 0.05)" : "#0d0d11",
-              padding: file ? "16px 20px" : "32px 20px",
+              backgroundColor: isDragging ? "rgba(95, 168, 240, 0.05)" : "#0c0c10",
+              padding: file ? "16px 20px" : "40px 20px",
               cursor: file ? "default" : "pointer",
               transition: "border-color 0.15s ease, background-color 0.15s ease",
               display: "flex",
@@ -201,16 +201,16 @@ export default function ResumeScorer({ keywords }: ResumeScorerProps) {
 
             {file ? (
               <>
-                {/* File icon */}
-                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#c28a28" strokeWidth="1.5" style={{ flexShrink: 0 }}>
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#5fa8f0" strokeWidth="1.5" style={{ flexShrink: 0 }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div
                     style={{
-                      fontFamily: "var(--font-dm-sans)",
+                      fontFamily: "var(--font-poppins)",
                       fontSize: "14px",
-                      color: "#e8e3d8",
+                      fontWeight: 500,
+                      color: "#ede8dd",
                       whiteSpace: "nowrap",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
@@ -220,9 +220,9 @@ export default function ResumeScorer({ keywords }: ResumeScorerProps) {
                   </div>
                   <div
                     style={{
-                      fontFamily: "var(--font-plex-mono)",
+                      fontFamily: "var(--font-poppins)",
                       fontSize: "11px",
-                      color: "#62627a",
+                      color: "#55556e",
                       marginTop: "2px",
                     }}
                   >
@@ -235,7 +235,7 @@ export default function ResumeScorer({ keywords }: ResumeScorerProps) {
                     background: "none",
                     border: "none",
                     cursor: "pointer",
-                    color: "#62627a",
+                    color: "#55556e",
                     padding: "4px",
                     display: "flex",
                     flexShrink: 0,
@@ -248,14 +248,14 @@ export default function ResumeScorer({ keywords }: ResumeScorerProps) {
               </>
             ) : (
               <div style={{ textAlign: "center", width: "100%" }}>
-                <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#3a3a52" strokeWidth="1.5" style={{ margin: "0 auto 12px" }}>
+                <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="#2a2a3a" strokeWidth="1.5" style={{ margin: "0 auto 12px" }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                 </svg>
-                <div style={{ fontFamily: "var(--font-dm-sans)", fontSize: "14px", color: "#7878a0" }}>
+                <div style={{ fontFamily: "var(--font-poppins)", fontSize: "15px", fontWeight: 500, color: "#8a8aa8" }}>
                   Drop your resume here or{" "}
-                  <span style={{ color: "#c28a28" }}>browse</span>
+                  <span style={{ color: "#5fa8f0" }}>browse</span>
                 </div>
-                <div style={{ fontFamily: "var(--font-plex-mono)", fontSize: "11px", color: "#3a3a52", marginTop: "6px" }}>
+                <div style={{ fontFamily: "var(--font-poppins)", fontSize: "11px", color: "#32324a", marginTop: "6px" }}>
                   PDF or DOCX · max 5 MB
                 </div>
               </div>
@@ -271,16 +271,17 @@ export default function ResumeScorer({ keywords }: ResumeScorerProps) {
                 padding: "11px",
                 borderRadius: "8px",
                 border: "none",
-                backgroundColor: "#c28a28",
-                fontFamily: "var(--font-plex-mono)",
+                backgroundColor: "#5fa8f0",
+                fontFamily: "var(--font-poppins)",
                 fontSize: "12px",
-                letterSpacing: "0.1em",
-                color: "#09090c",
+                fontWeight: 600,
+                letterSpacing: "0",
+                color: "#07070a",
                 cursor: "pointer",
                 transition: "background-color 0.15s ease",
               }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#d49a34" }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#c28a28" }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#78bcff" }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#5fa8f0" }}
             >
               SCORE MY RESUME
             </button>
@@ -294,10 +295,10 @@ export default function ResumeScorer({ keywords }: ResumeScorerProps) {
           {/* Overall score card */}
           <div
             style={{
-              padding: "28px 24px",
+              padding: "32px 24px",
               borderRadius: "10px",
-              backgroundColor: "#0d0d11",
-              border: "1px solid #22222e",
+              backgroundColor: "#0c0c10",
+              border: "1px solid #1e1e2a",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
@@ -305,11 +306,12 @@ export default function ResumeScorer({ keywords }: ResumeScorerProps) {
             }}
           >
             <span
+              className="anim-score"
               style={{
-                fontFamily: "var(--font-dm-sans)",
-                fontSize: "4rem",
-                fontWeight: 300,
-                letterSpacing: "-0.04em",
+                fontFamily: "var(--font-poppins)",
+                fontSize: "4.5rem",
+                fontWeight: 700,
+                letterSpacing: "-0.05em",
                 color: scoreColor(score.overallScore),
                 lineHeight: 1,
               }}
@@ -318,20 +320,21 @@ export default function ResumeScorer({ keywords }: ResumeScorerProps) {
             </span>
             <span
               style={{
-                fontFamily: "var(--font-plex-mono)",
+                fontFamily: "var(--font-poppins)",
                 fontSize: "10px",
-                letterSpacing: "0.18em",
+                fontWeight: 500,
+                letterSpacing: "0",
                 textTransform: "uppercase",
-                color: "#62627a",
+                color: "#55556e",
               }}
             >
               Overall Match
             </span>
             <p
               style={{
-                fontFamily: "var(--font-dm-sans)",
-                fontSize: "13px",
-                color: "#7878a0",
+                fontFamily: "var(--font-poppins)",
+                fontSize: "14px",
+                color: "#8a8aa8",
                 textAlign: "center",
                 marginTop: "4px",
                 lineHeight: 1.5,
@@ -346,11 +349,11 @@ export default function ResumeScorer({ keywords }: ResumeScorerProps) {
             style={{
               padding: "20px",
               borderRadius: "10px",
-              backgroundColor: "#0d0d11",
-              border: "1px solid #22222e",
+              backgroundColor: "#0c0c10",
+              border: "1px solid #1e1e2a",
               display: "flex",
               flexDirection: "column",
-              gap: "20px",
+              gap: "24px",
             }}
           >
             {CATEGORY_META.map(({ key, label, accent }) => {
@@ -359,13 +362,13 @@ export default function ResumeScorer({ keywords }: ResumeScorerProps) {
               const total = cat.matched.length + cat.missing.length
               return (
                 <div key={key}>
-                  {/* Category header */}
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
                     <span
                       style={{
-                        fontFamily: "var(--font-plex-mono)",
+                        fontFamily: "var(--font-poppins)",
                         fontSize: "10px",
-                        letterSpacing: "0.12em",
+                        fontWeight: 600,
+                        letterSpacing: "0",
                         textTransform: "uppercase",
                         color: accent,
                       }}
@@ -374,8 +377,9 @@ export default function ResumeScorer({ keywords }: ResumeScorerProps) {
                     </span>
                     <span
                       style={{
-                        fontFamily: "var(--font-plex-mono)",
+                        fontFamily: "var(--font-poppins)",
                         fontSize: "11px",
+                        fontWeight: 500,
                         color: scoreColor(cat.score),
                       }}
                     >
@@ -386,9 +390,9 @@ export default function ResumeScorer({ keywords }: ResumeScorerProps) {
                   {/* Progress bar */}
                   <div
                     style={{
-                      height: "3px",
-                      borderRadius: "2px",
-                      backgroundColor: "#1a1a26",
+                      height: "4px",
+                      borderRadius: "3px",
+                      backgroundColor: "#16161f",
                       marginBottom: "12px",
                       overflow: "hidden",
                     }}
@@ -398,26 +402,26 @@ export default function ResumeScorer({ keywords }: ResumeScorerProps) {
                         height: "100%",
                         width: `${total === 0 ? 100 : cat.score}%`,
                         backgroundColor: scoreColor(cat.score),
-                        borderRadius: "2px",
-                        transition: "width 0.4s ease",
+                        borderRadius: "3px",
+                        transition: "width 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
                       }}
                     />
                   </div>
 
                   {/* Keyword chips */}
                   {(cat.matched.length > 0 || cat.missing.length > 0) && (
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
                       {cat.matched.map((kw) => (
                         <span
                           key={kw}
                           style={{
-                            padding: "3px 10px",
-                            borderRadius: "4px",
-                            backgroundColor: "rgba(80, 192, 122, 0.1)",
-                            border: "1px solid rgba(80, 192, 122, 0.3)",
-                            fontFamily: "var(--font-plex-mono)",
+                            padding: "4px 10px",
+                            borderRadius: "5px",
+                            backgroundColor: "rgba(82, 200, 126, 0.12)",
+                            border: "1px solid rgba(82, 200, 126, 0.28)",
+                            fontFamily: "var(--font-poppins)",
                             fontSize: "11px",
-                            color: "#7edad8",
+                            color: "#84e4a8",
                           }}
                         >
                           {kw}
@@ -427,13 +431,13 @@ export default function ResumeScorer({ keywords }: ResumeScorerProps) {
                         <span
                           key={kw}
                           style={{
-                            padding: "3px 10px",
-                            borderRadius: "4px",
-                            backgroundColor: "rgba(224, 96, 96, 0.1)",
-                            border: "1px solid rgba(224, 96, 96, 0.3)",
-                            fontFamily: "var(--font-plex-mono)",
+                            padding: "4px 10px",
+                            borderRadius: "5px",
+                            backgroundColor: "rgba(232, 104, 104, 0.12)",
+                            border: "1px solid rgba(232, 104, 104, 0.28)",
+                            fontFamily: "var(--font-poppins)",
                             fontSize: "11px",
-                            color: "#f09898",
+                            color: "#f4a8a8",
                           }}
                         >
                           {kw}
@@ -452,24 +456,25 @@ export default function ResumeScorer({ keywords }: ResumeScorerProps) {
               style={{
                 padding: "20px",
                 borderRadius: "10px",
-                backgroundColor: "#0d0d11",
-                border: "1px solid #22222e",
+                backgroundColor: "#0c0c10",
+                border: "1px solid #1e1e2a",
               }}
             >
               <span
                 style={{
-                  fontFamily: "var(--font-plex-mono)",
+                  fontFamily: "var(--font-poppins)",
                   fontSize: "10px",
-                  letterSpacing: "0.18em",
+                  fontWeight: 500,
+                  letterSpacing: "0",
                   textTransform: "uppercase",
-                  color: "#62627a",
+                  color: "#55556e",
                   display: "block",
                   marginBottom: "14px",
                 }}
               >
                 Suggestions
               </span>
-              <ol style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "10px" }}>
+              <ol style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "8px" }}>
                 {score.suggestions.map((s, i) => (
                   <li
                     key={i}
@@ -478,16 +483,17 @@ export default function ResumeScorer({ keywords }: ResumeScorerProps) {
                       gap: "12px",
                       alignItems: "flex-start",
                       padding: "10px 14px",
-                      borderRadius: "7px",
-                      border: "1px solid #1a1a26",
-                      backgroundColor: "#09090c",
+                      borderRadius: "6px",
+                      border: "1px solid #1e1e2a",
+                      backgroundColor: "#07070a",
                     }}
                   >
                     <span
                       style={{
-                        fontFamily: "var(--font-plex-mono)",
+                        fontFamily: "var(--font-poppins)",
                         fontSize: "10px",
-                        color: "#c28a28",
+                        fontWeight: 600,
+                        color: "#e89050",
                         flexShrink: 0,
                         marginTop: "2px",
                       }}
@@ -496,9 +502,9 @@ export default function ResumeScorer({ keywords }: ResumeScorerProps) {
                     </span>
                     <span
                       style={{
-                        fontFamily: "var(--font-dm-sans)",
+                        fontFamily: "var(--font-poppins)",
                         fontSize: "13px",
-                        color: "#7878a0",
+                        color: "#8a8aa8",
                         lineHeight: 1.55,
                       }}
                     >
@@ -515,23 +521,23 @@ export default function ResumeScorer({ keywords }: ResumeScorerProps) {
             onClick={reset}
             style={{
               padding: "10px",
-              borderRadius: "8px",
-              border: "1px solid #2e2e3c",
+              borderRadius: "6px",
+              border: "1px solid #2a2a3a",
               backgroundColor: "transparent",
-              fontFamily: "var(--font-plex-mono)",
+              fontFamily: "var(--font-poppins)",
               fontSize: "11px",
-              letterSpacing: "0.1em",
-              color: "#7878a0",
+              letterSpacing: "0",
+              color: "#55556e",
               cursor: "pointer",
               transition: "color 0.15s ease, border-color 0.15s ease",
             }}
             onMouseEnter={(e) => {
-              ;(e.currentTarget as HTMLButtonElement).style.color = "#e8e3d8"
-              ;(e.currentTarget as HTMLButtonElement).style.borderColor = "#4a4a62"
+              ;(e.currentTarget as HTMLButtonElement).style.color = "#ede8dd"
+              ;(e.currentTarget as HTMLButtonElement).style.borderColor = "#3a3a50"
             }}
             onMouseLeave={(e) => {
-              ;(e.currentTarget as HTMLButtonElement).style.color = "#7878a0"
-              ;(e.currentTarget as HTMLButtonElement).style.borderColor = "#2e2e3c"
+              ;(e.currentTarget as HTMLButtonElement).style.color = "#55556e"
+              ;(e.currentTarget as HTMLButtonElement).style.borderColor = "#2a2a3a"
             }}
           >
             UPLOAD A DIFFERENT RESUME

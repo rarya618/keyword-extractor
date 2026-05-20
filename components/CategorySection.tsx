@@ -34,29 +34,37 @@ export default function CategorySection({
       style={{
         animationDelay: `${animDelay}ms`,
         gridColumn: fullWidth ? "1 / -1" : undefined,
-        backgroundColor: "#0d0d11",
-        border: "1px solid #22222e",
-        borderLeft: `3px solid ${colors.accent}`,
+        backgroundColor: "#0c0c10",
+        border: "1px solid #1e1e2a",
         borderRadius: "10px",
         overflow: "hidden",
       }}
     >
+      {/* Top color bar */}
+      <div
+        style={{
+          height: "3px",
+          background: `linear-gradient(90deg, ${colors.accent} 0%, ${colors.accent}88 100%)`,
+        }}
+      />
+
       {/* Card header */}
       <div
         className="flex items-center justify-between"
         style={{
           padding: "12px 16px",
-          borderBottom: "1px solid #22222e",
+          borderBottom: "1px solid #1e1e2a",
+          backgroundColor: colors.chipBg,
         }}
       >
         <div className="flex items-center gap-2.5">
           <h3
             style={{
-              fontFamily: "var(--font-plex-mono)",
+              fontFamily: "var(--font-poppins)",
               fontSize: "11px",
-              letterSpacing: "0.12em",
+              letterSpacing: "0",
               textTransform: "uppercase",
-              fontWeight: 500,
+              fontWeight: 600,
               color: colors.accent,
             }}
           >
@@ -64,9 +72,15 @@ export default function CategorySection({
           </h3>
           <span
             style={{
-              fontFamily: "var(--font-plex-mono)",
-              fontSize: "11px",
-              color: "#62627a",
+              fontFamily: "var(--font-poppins)",
+              fontSize: "10px",
+              fontWeight: 500,
+              color: colors.chipText,
+              backgroundColor: colors.chipBg,
+              border: `1px solid ${colors.chipBorder}`,
+              borderRadius: "4px",
+              padding: "1px 6px",
+              lineHeight: "16px",
             }}
           >
             {keywords.length}
@@ -77,11 +91,12 @@ export default function CategorySection({
           <button
             onClick={handleCopyCategory}
             style={{
-              fontFamily: "var(--font-plex-mono)",
+              fontFamily: "var(--font-poppins)",
               fontSize: "10px",
-              letterSpacing: "0.1em",
+              letterSpacing: "0",
               textTransform: "uppercase",
-              color: copied ? "#50c07a" : "#62627a",
+              fontWeight: 500,
+              color: copied ? "#84e4a8" : "#55556e",
               cursor: "pointer",
               background: "none",
               border: "none",
@@ -89,10 +104,10 @@ export default function CategorySection({
               padding: "2px 0",
             }}
             onMouseEnter={(e) => {
-              if (!copied) (e.currentTarget as HTMLButtonElement).style.color = "#e8e3d8"
+              if (!copied) (e.currentTarget as HTMLButtonElement).style.color = "#ede8dd"
             }}
             onMouseLeave={(e) => {
-              if (!copied) (e.currentTarget as HTMLButtonElement).style.color = "#62627a"
+              if (!copied) (e.currentTarget as HTMLButtonElement).style.color = "#55556e"
             }}
           >
             {copied ? "✓ Copied" : "Copy"}
@@ -101,25 +116,24 @@ export default function CategorySection({
       </div>
 
       {/* Chips */}
-      <div style={{ padding: "14px 16px" }}>
+      <div style={{ padding: "16px" }}>
         {keywords.length > 0 ? (
-          <div className="flex flex-wrap" style={{ gap: "6px" }}>
+          <div className="flex flex-wrap" style={{ gap: "8px" }}>
             {keywords.map((kw, idx) => (
               <KeywordChip
                 key={kw}
                 keyword={kw}
                 colors={colors}
-                animDelay={animDelay + idx * 28}
+                animDelay={animDelay + idx * 20}
               />
             ))}
           </div>
         ) : (
           <p
             style={{
-              fontFamily: "var(--font-plex-mono)",
+              fontFamily: "var(--font-poppins)",
               fontSize: "11px",
-              color: "#4a4a62",
-              fontStyle: "italic",
+              color: "#32324a",
             }}
           >
             None found

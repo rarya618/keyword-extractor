@@ -39,15 +39,16 @@ export default function AnalysisHistory({
   if (analyses.length === 0) return null
 
   return (
-    <div style={{ borderTop: "1px solid #22222e", marginTop: "8px" }}>
+    <div style={{ borderTop: "1px solid #1e1e2a", marginTop: "8px" }}>
       <p
         style={{
-          fontFamily: "var(--font-plex-mono)",
+          fontFamily: "var(--font-poppins)",
           fontSize: "10px",
-          letterSpacing: "0.16em",
+          letterSpacing: "0",
           textTransform: "uppercase",
-          color: "#62627a",
-          padding: "16px 24px 10px",
+          fontWeight: 500,
+          color: "#55556e",
+          padding: "16px 24px 8px",
         }}
       >
         Recent
@@ -67,14 +68,14 @@ export default function AnalysisHistory({
                 width: "100%",
                 textAlign: "left",
                 padding: "9px 24px",
-                background: isActive ? "rgba(194, 138, 40, 0.08)" : "none",
+                background: isActive ? "rgba(95, 168, 240, 0.07)" : "none",
                 border: "none",
-                borderLeft: isActive ? "2px solid #c28a28" : "2px solid transparent",
+                borderLeft: isActive ? "2px solid #5fa8f0" : "2px solid transparent",
                 cursor: "pointer",
                 transition: "background 0.12s ease",
               }}
               onMouseEnter={(e) => {
-                if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.03)"
+                if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.025)"
               }}
               onMouseLeave={(e) => {
                 if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = "none"
@@ -82,9 +83,9 @@ export default function AnalysisHistory({
             >
               <div
                 style={{
-                  fontFamily: "var(--font-dm-sans)",
-                  fontSize: "12px",
-                  color: isActive ? "#e8e3d8" : "#9090a8",
+                  fontFamily: "var(--font-poppins)",
+                  fontSize: "13px",
+                  color: isActive ? "#ede8dd" : "#8a8aa8",
                   lineHeight: 1.4,
                   marginBottom: "3px",
                   overflow: "hidden",
@@ -97,31 +98,36 @@ export default function AnalysisHistory({
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <span
                   style={{
-                    fontFamily: "var(--font-plex-mono)",
+                    fontFamily: "var(--font-poppins)",
                     fontSize: "10px",
-                    color: "#4a4a62",
+                    color: isActive ? "#45455e" : "#32324a",
                   }}
                 >
                   {relativeTime(a.createdAt)}
                 </span>
-                <span style={{ width: "2px", height: "2px", borderRadius: "50%", backgroundColor: "#3a3a50", flexShrink: 0 }} />
+                <span style={{ width: "2px", height: "2px", borderRadius: "50%", backgroundColor: "#1e1e2a", flexShrink: 0 }} />
                 <span
                   style={{
-                    fontFamily: "var(--font-plex-mono)",
+                    fontFamily: "var(--font-poppins)",
                     fontSize: "10px",
-                    color: "#4a4a62",
+                    color: isActive ? "#45455e" : "#32324a",
                   }}
                 >
                   {totalCount} terms
                 </span>
                 {a.source === "url" && (
                   <>
-                    <span style={{ width: "2px", height: "2px", borderRadius: "50%", backgroundColor: "#3a3a50", flexShrink: 0 }} />
+                    <span style={{ width: "2px", height: "2px", borderRadius: "50%", backgroundColor: "#1e1e2a", flexShrink: 0 }} />
                     <span
                       style={{
-                        fontFamily: "var(--font-plex-mono)",
-                        fontSize: "10px",
-                        color: "#4a4a62",
+                        fontFamily: "var(--font-poppins)",
+                        fontSize: "9px",
+                        fontWeight: 500,
+                        color: "#5fa8f0",
+                        border: "1px solid rgba(95, 168, 240, 0.25)",
+                        borderRadius: "3px",
+                        padding: "0px 5px",
+                        letterSpacing: "0",
                       }}
                     >
                       url
