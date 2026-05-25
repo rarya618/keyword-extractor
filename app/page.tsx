@@ -8,7 +8,7 @@ import { makeSnippet, saveAnalysis, loadAnalyses, type Analysis } from "@/lib/an
 import JobInput from "@/components/JobInput"
 import ResultsPanel, { type KeywordResult } from "@/components/ResultsPanel"
 import AnalysisHistory from "@/components/AnalysisHistory"
-import ResumeScorer from "@/components/ResumeScorer"
+import ResumeScorer, { type ResumeScore } from "@/components/ResumeScorer"
 
 export default function Home() {
   const [uid, setUid] = useState<string | null>(null)
@@ -17,6 +17,9 @@ export default function Home() {
   const [history, setHistory] = useState<Analysis[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [resumeScore, setResumeScore] = useState<ResumeScore | null>(null)
+  const [submittedUrl, setSubmittedUrl] = useState<string | null>(null)
+  const [jobMeta, setJobMeta] = useState<{ company: string | null; jobTitle: string | null } | null>(null)
 
   // Anonymous auth + history load
   useEffect(() => {
@@ -43,6 +46,9 @@ export default function Home() {
     setError(null)
     setKeywords(null)
     setActiveId(null)
+    setResumeScore(null)
+    setJobMeta(null)
+    setSubmittedUrl(payload.url ?? null)
 
     try {
       const res = await fetch("/api/extract", {
@@ -60,6 +66,7 @@ export default function Home() {
 
       const result: KeywordResult = data.keywords
       setKeywords(result)
+      if (data.meta) setJobMeta(data.meta)
 
       // Persist + analytics
       if (uid) {
@@ -87,140 +94,171 @@ export default function Home() {
     setError(null)
   }
 
-  return (
-    <div className="app-layout">
-      {/* Sidebar */}
-      <aside className="app-sidebar">
-        {/* Header */}
-        <div className="col-header">
-          <span
+  const nav = (
+    <nav
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 100,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "20px 32px",
+      }}
+    >
+      <span
+        onClick={() => {
+          setKeywords(null)
+          setActiveId(null)
+          setResumeScore(null)
+          setJobMeta(null)
+          setSubmittedUrl(null)
+          setError(null)
+        }}
+        style={{
+          fontFamily: "var(--font-rubik)",
+          fontSize: "22px",
+          fontWeight: 700,
+          letterSpacing: "-0.04em",
+          color: "#ffffff",
+          cursor: "pointer",
+        }}
+      >
+        tailr
+      </span>
+      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        {(jobMeta && (jobMeta.jobTitle || jobMeta.company)) && (
+          <a
+            href={submittedUrl ?? undefined}
+            target="_blank"
+            rel="noopener noreferrer"
             style={{
-              fontFamily: "var(--font-poppins)",
-              fontSize: "16px",
-              letterSpacing: "0.04em",
-              fontWeight: 600,
-              color: "#ede8dd",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              fontFamily: "var(--font-rubik)",
+              fontSize: "13px",
+              fontWeight: 500,
+              color: "rgba(255,255,255,0.7)",
+              textDecoration: "none",
+              backgroundColor: "rgba(255,255,255,0.1)",
+              border: "1px solid rgba(255,255,255,0.15)",
+              borderRadius: "999px",
+              padding: "6px 14px",
+              whiteSpace: "nowrap",
+              maxWidth: "360px",
+              overflow: "hidden",
+              transition: "background-color 0.15s ease, color 0.15s ease",
+              cursor: submittedUrl ? "pointer" : "default",
+            }}
+            onMouseEnter={(e) => {
+              if (!submittedUrl) return
+              const el = e.currentTarget as HTMLAnchorElement
+              el.style.color = "#ffffff"
+              el.style.backgroundColor = "rgba(255,255,255,0.15)"
+            }}
+            onMouseLeave={(e) => {
+              const el = e.currentTarget as HTMLAnchorElement
+              el.style.color = "rgba(255,255,255,0.7)"
+              el.style.backgroundColor = "rgba(255,255,255,0.1)"
             }}
           >
-            tailr
-          </span>
+            <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+              {[jobMeta.company, jobMeta.jobTitle].filter(Boolean).join(" · ")}
+            </span>
+            {submittedUrl && (
+              <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} style={{ flexShrink: 0, opacity: 0.6 }}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            )}
+          </a>
+        )}
+      </div>
+    </nav>
+  )
+
+  if (!keywords) {
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "48px 24px",
+        }}
+      >
+        {nav}
+
+        {/* Title + subtitle */}
+        <div className="anim-fade-up" style={{ textAlign: "center", marginBottom: "48px" }}>
+          <h1
+            style={{
+              fontFamily: "var(--font-rubik)",
+              fontSize: "clamp(2.2rem, 4vw, 3.4rem)",
+              whiteSpace: "nowrap",
+              fontWeight: 700,
+              letterSpacing: "-0.03em",
+              color: "#ffffff",
+              marginBottom: "6px",
+            }}
+          >
+            Surface what employers want
+          </h1>
+          <p
+            style={{
+              fontFamily: "var(--font-rubik)",
+              fontSize: "16px",
+              fontWeight: 400,
+              fontSize: "20px",
+              color: "rgba(255,255,255,0.65)",
+              lineHeight: 1.6,
+            }}
+          >
+            Paste a job listing or drop in a URL. Extract the exact language that belongs on your resume.
+          </p>
         </div>
 
-        {/* Input form */}
-        <div style={{ padding: "24px" }}>
-          <JobInput onSubmit={handleExtract} loading={loading} error={error} />
+        {/* Form card */}
+        <div
+          className="anim-fade-up"
+          style={{ width: "100%", maxWidth: "600px" }}
+        >
+          <div
+            style={{
+              background: "#ffffff",
+              borderRadius: "14px",
+              padding: "28px",
+            }}
+          >
+            <JobInput onSubmit={handleExtract} loading={loading} error={error} />
+          </div>
         </div>
+      </div>
+    )
+  }
 
-        {/* History */}
-        <AnalysisHistory
-          analyses={history}
-          activeId={activeId}
-          onSelect={handleSelectHistory}
-        />
-      </aside>
-
+  return (
+    <div>
+      {nav}
+    <div className="app-layout" style={{ marginTop: "64px" }}>
       {/* Main content */}
       <main className="app-main">
-        <div className={`app-main-inner${keywords ? " app-main-inner--results" : ""}`}>
-          {/* Hero — hidden once results are available */}
-          {!keywords && (
-            <div className="anim-fade-up" style={{ marginBottom: "56px" }}>
-              <h1
-                style={{
-                  fontFamily: "var(--font-poppins)",
-                  fontSize: "clamp(2.6rem, 4vw, 3.8rem)",
-                  fontWeight: 500,
-                  lineHeight: 1.08,
-                  letterSpacing: "-0.03em",
-                  marginBottom: "1.1rem",
-                  color: "#ede8dd",
-                }}
-              >
-                Surface what<br />
-                <span style={{ color: "#5fa8f0", fontWeight: 600 }}>employers want.</span>
-              </h1>
-              <p
-                style={{
-                  color: "#8a8aa8",
-                  maxWidth: "26rem",
-                  lineHeight: 1.7,
-                  fontSize: "15px",
-                  fontWeight: 400,
-                }}
-              >
-                Paste a job listing or drop in a URL. Extract the exact language that belongs on your resume.
-              </p>
-            </div>
-          )}
-
-          {/* Results */}
-          {keywords && <ResultsPanel keywords={keywords} />}
-
-          {/* Empty state */}
-          {!keywords && !loading && (
-            <div
-              style={{
-                borderTop: "1px solid #1e1e2a",
-                paddingTop: "40px",
-                display: "flex",
-                alignItems: "center",
-                gap: "12px",
-              }}
-            >
-              <div style={{ width: "6px", height: "6px", borderRadius: "50%", backgroundColor: "#1e1e2a", flexShrink: 0 }} />
-              <p
-                style={{
-                  fontFamily: "var(--font-poppins)",
-                  fontSize: "11px",
-                  letterSpacing: "0",
-                  textTransform: "uppercase",
-                  color: "#32324a",
-                }}
-              >
-                Awaiting input
-              </p>
-            </div>
-          )}
+        <div className="app-main-inner app-main-inner--results">
+          <ResultsPanel keywords={keywords} resumeScore={resumeScore} />
         </div>
       </main>
 
       {/* Resume scorer column */}
       <aside className="app-resume">
-        <div className="col-header" style={{ borderBottom: "none", paddingBottom: "8px" }}>
-          <span
-            style={{
-              fontFamily: "var(--font-poppins)",
-              fontSize: "22px",
-              letterSpacing: "-0.02em",
-              fontWeight: 600,
-              color: "#ede8dd",
-            }}
-          >
-            Resume Score
-          </span>
-        </div>
-
-        <div style={{ padding: "12px 24px 24px" }}>
-          {keywords ? (
-            <ResumeScorer keywords={keywords} />
-          ) : (
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <div style={{ width: "6px", height: "6px", borderRadius: "50%", backgroundColor: "#1e1e2a", flexShrink: 0 }} />
-              <p
-                style={{
-                  fontFamily: "var(--font-poppins)",
-                  fontSize: "11px",
-                  letterSpacing: "0",
-                  textTransform: "uppercase",
-                  color: "#32324a",
-                }}
-              >
-                Extract keywords first
-              </p>
-            </div>
-          )}
+        <div style={{ padding: "32px 16px 16px" }}>
+          <ResumeScorer keywords={keywords} onScore={setResumeScore} />
         </div>
       </aside>
+    </div>
     </div>
   )
 }

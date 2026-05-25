@@ -18,8 +18,22 @@ export interface CategoryColors {
   chipText: string
 }
 
+interface CategoryScore {
+  matched: string[]
+  missing: string[]
+  score: number
+}
+
+interface ResumeScore {
+  overallScore: number
+  categories: Record<keyof KeywordResult, CategoryScore>
+  suggestions: string[]
+  summary: string
+}
+
 interface ResultsPanelProps {
   keywords: KeywordResult
+  resumeScore?: ResumeScore | null
 }
 
 const CATEGORIES: {
@@ -79,7 +93,7 @@ const CATEGORIES: {
   },
 ]
 
-export default function ResultsPanel({ keywords }: ResultsPanelProps) {
+export default function ResultsPanel({ keywords, resumeScore }: ResultsPanelProps) {
   const [copied, setCopied] = useState(false)
 
   const handleCopyAll = () => {
@@ -101,41 +115,29 @@ export default function ResultsPanel({ keywords }: ResultsPanelProps) {
       {/* Header */}
       <div className="flex items-end justify-between" style={{ marginBottom: "24px" }}>
         <div>
-          <p
+          <div
             style={{
-              fontFamily: "var(--font-poppins)",
-              fontSize: "22px",
-              fontWeight: 600,
-              letterSpacing: "-0.02em",
+              fontFamily: "var(--font-rubik)",
+              fontSize: "3.5rem",
+              fontWeight: 700,
+              letterSpacing: "-0.04em",
               color: "#ede8dd",
-              marginBottom: "6px",
+              lineHeight: 1,
             }}
           >
-            Extracted Keywords
-          </p>
-          <div className="flex items-baseline gap-3">
-            <span
-              style={{
-                fontFamily: "var(--font-poppins)",
-                fontSize: "3rem",
-                fontWeight: 600,
-                letterSpacing: "-0.04em",
-                color: "#ede8dd",
-                lineHeight: 1,
-              }}
-            >
-              {totalCount}
-            </span>
-            <span
-              style={{
-                fontFamily: "var(--font-poppins)",
-                fontSize: "15px",
-                fontWeight: 400,
-                color: "#55556e",
-              }}
-            >
-              terms identified
-            </span>
+            {totalCount}
+          </div>
+          <div
+            style={{
+              fontFamily: "var(--font-rubik)",
+              fontSize: "26px",
+              fontWeight: 400,
+              color: "rgba(237,232,221,0.75)",
+              marginTop: "2px",
+              letterSpacing: "0",
+            }}
+          >
+            keywords extracted
           </div>
         </div>
 
@@ -146,43 +148,43 @@ export default function ResultsPanel({ keywords }: ResultsPanelProps) {
             alignItems: "center",
             gap: "7px",
             padding: "8px 16px",
-            border: "1px solid #2a2a3a",
+            border: "1px solid rgba(255,255,255,0.2)",
             borderRadius: "6px",
             backgroundColor: "transparent",
-            fontFamily: "var(--font-poppins)",
-            fontSize: "10px",
+            fontFamily: "var(--font-rubik)",
+            fontSize: "13px",
             fontWeight: 500,
             letterSpacing: "0",
-            color: copied ? "#84e4a8" : "#55556e",
+            color: copied ? "#84e4a8" : "#ffffff",
             cursor: "pointer",
             transition: "color 0.15s ease, border-color 0.15s ease",
           }}
           onMouseEnter={(e) => {
             if (!copied) {
               ;(e.currentTarget as HTMLButtonElement).style.color = "#ede8dd"
-              ;(e.currentTarget as HTMLButtonElement).style.borderColor = "#3a3a50"
+              ;(e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(255,255,255,0.4)"
             }
           }}
           onMouseLeave={(e) => {
             if (!copied) {
-              ;(e.currentTarget as HTMLButtonElement).style.color = "#55556e"
-              ;(e.currentTarget as HTMLButtonElement).style.borderColor = "#2a2a3a"
+              ;(e.currentTarget as HTMLButtonElement).style.color = "#ffffff"
+              ;(e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(255,255,255,0.2)"
             }
           }}
         >
           {copied ? (
             <>
-              <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
-              COPIED
+              Copied
             </>
           ) : (
             <>
-              <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
               </svg>
-              COPY ALL
+              Copy all
             </>
           )}
         </button>
@@ -192,8 +194,8 @@ export default function ResultsPanel({ keywords }: ResultsPanelProps) {
       <div
         className="category-grid"
         style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(2, 1fr)",
+          display: "flex",
+          flexDirection: "column",
           gap: "16px",
         }}
       >
@@ -205,6 +207,8 @@ export default function ResultsPanel({ keywords }: ResultsPanelProps) {
             colors={colors}
             animDelay={idx * 70}
             fullWidth={idx === CATEGORIES.length - 1 && CATEGORIES.length % 2 !== 0}
+            matched={resumeScore?.categories[key]?.matched}
+            missing={resumeScore?.categories[key]?.missing}
           />
         ))}
       </div>

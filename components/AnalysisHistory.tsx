@@ -42,7 +42,7 @@ export default function AnalysisHistory({
     <div style={{ borderTop: "1px solid #1e1e2a", marginTop: "8px" }}>
       <p
         style={{
-          fontFamily: "var(--font-poppins)",
+          fontFamily: "var(--font-rubik)",
           fontSize: "10px",
           letterSpacing: "0",
           textTransform: "uppercase",
@@ -83,7 +83,7 @@ export default function AnalysisHistory({
             >
               <div
                 style={{
-                  fontFamily: "var(--font-poppins)",
+                  fontFamily: "var(--font-rubik)",
                   fontSize: "13px",
                   color: isActive ? "#ede8dd" : "#8a8aa8",
                   lineHeight: 1.4,
@@ -98,7 +98,7 @@ export default function AnalysisHistory({
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <span
                   style={{
-                    fontFamily: "var(--font-poppins)",
+                    fontFamily: "var(--font-rubik)",
                     fontSize: "10px",
                     color: isActive ? "#45455e" : "#32324a",
                   }}
@@ -108,7 +108,7 @@ export default function AnalysisHistory({
                 <span style={{ width: "2px", height: "2px", borderRadius: "50%", backgroundColor: "#1e1e2a", flexShrink: 0 }} />
                 <span
                   style={{
-                    fontFamily: "var(--font-poppins)",
+                    fontFamily: "var(--font-rubik)",
                     fontSize: "10px",
                     color: isActive ? "#45455e" : "#32324a",
                   }}
@@ -120,7 +120,7 @@ export default function AnalysisHistory({
                     <span style={{ width: "2px", height: "2px", borderRadius: "50%", backgroundColor: "#1e1e2a", flexShrink: 0 }} />
                     <span
                       style={{
-                        fontFamily: "var(--font-poppins)",
+                        fontFamily: "var(--font-rubik)",
                         fontSize: "9px",
                         fontWeight: 500,
                         color: "#5fa8f0",

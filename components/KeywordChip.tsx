@@ -7,9 +7,10 @@ interface KeywordChipProps {
   keyword: string
   colors: CategoryColors
   animDelay: number
+  matchStatus?: "matched" | "missing" | null
 }
 
-export default function KeywordChip({ keyword, colors, animDelay }: KeywordChipProps) {
+export default function KeywordChip({ keyword, colors, animDelay, matchStatus }: KeywordChipProps) {
   const [copied, setCopied] = useState(false)
 
   const handleClick = () => {
@@ -42,11 +43,11 @@ export default function KeywordChip({ keyword, colors, animDelay }: KeywordChipP
         display: "inline-flex",
         alignItems: "center",
         gap: "5px",
-        padding: "5px 12px",
+        padding: "7px 16px 5px",
         borderRadius: "5px",
-        fontSize: "12px",
-        fontFamily: "var(--font-poppins)",
-        fontWeight: 500,
+        fontSize: "16px",
+        fontFamily: "var(--font-rubik)",
+        fontWeight: 400,
         cursor: "pointer",
         transition: "background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease",
         backgroundColor: copied ? colors.accent : colors.chipBg,
@@ -64,7 +65,19 @@ export default function KeywordChip({ keyword, colors, animDelay }: KeywordChipP
           Copied
         </>
       ) : (
-        keyword
+        <>
+          {keyword}
+          {matchStatus === "matched" && (
+            <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="#52c87e" strokeWidth={2.5} style={{ flexShrink: 0 }}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          )}
+          {matchStatus === "missing" && (
+            <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="#e86868" strokeWidth={2.5} style={{ flexShrink: 0 }}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          )}
+        </>
       )}
     </button>
   )

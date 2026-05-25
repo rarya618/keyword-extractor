@@ -13,10 +13,13 @@ Rules:
 - Hard skills → technicalSkills. Interpersonal/behavioral traits → softSkills.
 - Use the listing's own signals ("required", "must have", "preferred", "bonus") to separate required vs. nice-to-have.
 - industryDomain: vertical, compliance frameworks, business model (e.g. "FinTech", "HIPAA", "B2B SaaS").
+- Also extract the company name and job title from the listing. If not found, use null.
 - Return ONLY valid JSON with these exact keys. No markdown, no explanation.
 
 Schema:
 {
+  "company": "string | null",
+  "jobTitle": "string | null",
   "technicalSkills": ["string"],
   "softSkills": ["string"],
   "requiredQualifications": ["string"],
@@ -142,9 +145,10 @@ export async function POST(req: NextRequest) {
 
     const raw = message.content[0].type === "text" ? message.content[0].text : ""
     const cleaned = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "").trim()
-    const keywords = JSON.parse(cleaned)
+    const parsed = JSON.parse(cleaned)
+    const { company, jobTitle, ...keywords } = parsed
 
-    return NextResponse.json({ keywords })
+    return NextResponse.json({ keywords, meta: { company: company ?? null, jobTitle: jobTitle ?? null } })
   } catch (e) {
     console.error("Extraction error:", e)
     return NextResponse.json({ error: "Failed to extract keywords. Please try again." }, { status: 500 })
