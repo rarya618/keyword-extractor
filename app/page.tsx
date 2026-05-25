@@ -211,7 +211,6 @@ export default function Home() {
           <p
             style={{
               fontFamily: "var(--font-rubik)",
-              fontSize: "16px",
               fontWeight: 400,
               fontSize: "20px",
               color: "rgba(255,255,255,0.65)",
