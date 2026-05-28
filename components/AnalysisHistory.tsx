@@ -20,6 +20,8 @@ function relativeTime(date: Date): string {
 }
 
 function formatSnippet(analysis: Analysis): string {
+  const heading = [analysis.company, analysis.jobTitle].filter(Boolean).join(" · ")
+  if (heading) return heading
   if (analysis.source === "url") {
     try {
       return new URL(analysis.snippet).hostname.replace(/^www\./, "")
@@ -39,7 +41,7 @@ export default function AnalysisHistory({
   if (analyses.length === 0) return null
 
   return (
-    <div style={{ borderTop: "1px solid #1e1e2a", marginTop: "8px" }}>
+    <div style={{ borderTop: "1px solid rgba(255,255,255,0.1)", marginTop: "8px" }}>
       <p
         style={{
           fontFamily: "var(--font-rubik)",
@@ -47,7 +49,7 @@ export default function AnalysisHistory({
           letterSpacing: "0",
           textTransform: "uppercase",
           fontWeight: 500,
-          color: "#55556e",
+          color: "rgba(255,255,255,0.55)",
           padding: "16px 24px 8px",
         }}
       >
@@ -68,14 +70,14 @@ export default function AnalysisHistory({
                 width: "100%",
                 textAlign: "left",
                 padding: "9px 24px",
-                background: isActive ? "rgba(95, 168, 240, 0.07)" : "none",
+                background: isActive ? "rgba(255,255,255,0.08)" : "none",
                 border: "none",
-                borderLeft: isActive ? "2px solid #5fa8f0" : "2px solid transparent",
+                borderLeft: isActive ? "2px solid rgba(255,255,255,0.6)" : "2px solid transparent",
                 cursor: "pointer",
                 transition: "background 0.12s ease",
               }}
               onMouseEnter={(e) => {
-                if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.025)"
+                if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.05)"
               }}
               onMouseLeave={(e) => {
                 if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = "none"
@@ -85,7 +87,7 @@ export default function AnalysisHistory({
                 style={{
                   fontFamily: "var(--font-rubik)",
                   fontSize: "13px",
-                  color: isActive ? "#ede8dd" : "#8a8aa8",
+                  color: isActive ? "#ffffff" : "rgba(255,255,255,0.9)",
                   lineHeight: 1.4,
                   marginBottom: "3px",
                   overflow: "hidden",
@@ -100,31 +102,31 @@ export default function AnalysisHistory({
                   style={{
                     fontFamily: "var(--font-rubik)",
                     fontSize: "10px",
-                    color: isActive ? "#45455e" : "#32324a",
+                    color: "rgba(255,255,255,0.5)",
                   }}
                 >
                   {relativeTime(a.createdAt)}
                 </span>
-                <span style={{ width: "2px", height: "2px", borderRadius: "50%", backgroundColor: "#1e1e2a", flexShrink: 0 }} />
+                <span style={{ width: "2px", height: "2px", borderRadius: "50%", backgroundColor: "rgba(255,255,255,0.2)", flexShrink: 0 }} />
                 <span
                   style={{
                     fontFamily: "var(--font-rubik)",
                     fontSize: "10px",
-                    color: isActive ? "#45455e" : "#32324a",
+                    color: "rgba(255,255,255,0.5)",
                   }}
                 >
                   {totalCount} terms
                 </span>
                 {a.source === "url" && (
                   <>
-                    <span style={{ width: "2px", height: "2px", borderRadius: "50%", backgroundColor: "#1e1e2a", flexShrink: 0 }} />
+                    <span style={{ width: "2px", height: "2px", borderRadius: "50%", backgroundColor: "rgba(255,255,255,0.2)", flexShrink: 0 }} />
                     <span
                       style={{
                         fontFamily: "var(--font-rubik)",
                         fontSize: "9px",
                         fontWeight: 500,
-                        color: "#5fa8f0",
-                        border: "1px solid rgba(95, 168, 240, 0.25)",
+                        color: "rgba(255,255,255,0.5)",
+                        border: "1px solid rgba(255,255,255,0.2)",
                         borderRadius: "3px",
                         padding: "0px 5px",
                         letterSpacing: "0",

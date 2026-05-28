@@ -16,6 +16,8 @@ export interface Analysis {
   snippet: string
   source: "paste" | "url"
   keywords: KeywordResult
+  company: string | null
+  jobTitle: string | null
 }
 
 export function makeSnippet(payload: { jobListing?: string; url?: string }): {
@@ -31,7 +33,7 @@ export function makeSnippet(payload: { jobListing?: string; url?: string }): {
 
 export async function saveAnalysis(
   uid: string,
-  data: { snippet: string; source: "paste" | "url"; keywords: KeywordResult }
+  data: { snippet: string; source: "paste" | "url"; keywords: KeywordResult; company: string | null; jobTitle: string | null }
 ): Promise<void> {
   const ref = collection(db, "analyses", uid, "results")
   await addDoc(ref, { ...data, createdAt: serverTimestamp() })
@@ -47,5 +49,7 @@ export async function loadAnalyses(uid: string): Promise<Analysis[]> {
     snippet: doc.data().snippet as string,
     source: doc.data().source as "paste" | "url",
     keywords: doc.data().keywords as KeywordResult,
+    company: (doc.data().company as string | null) ?? null,
+    jobTitle: (doc.data().jobTitle as string | null) ?? null,
   }))
 }

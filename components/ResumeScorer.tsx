@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { KeywordResult } from "./ResultsPanel"
+import { logAppEvent } from "@/lib/analytics"
 
 export interface CategoryScore {
   matched: string[]
@@ -102,9 +103,12 @@ export default function ResumeScorer({ keywords, onScore }: ResumeScorerProps) {
       const data = await res.json()
       if (!res.ok) {
         setError(data.error ?? "Something went wrong. Please try again.")
+        logAppEvent({ name: "resume_score_error" })
       } else {
         setScore(data.score)
         onScore?.(data.score)
+        const ext = file.name.split(".").pop()?.toLowerCase() ?? "unknown"
+        logAppEvent({ name: "resume_scored", overall_score: data.score.overallScore, file_type: ext })
       }
     } catch {
       setError("Network error. Please try again.")

@@ -1,9 +1,9 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { signInAnonymously, onAuthStateChanged } from "firebase/auth"
-import { logEvent } from "firebase/analytics"
-import { auth, initAnalytics } from "@/lib/firebase"
+import { onAuthStateChanged, signInWithPopup, signOut, type User } from "firebase/auth"
+import { auth, googleProvider } from "@/lib/firebase"
+import { logAppEvent } from "@/lib/analytics"
 import { makeSnippet, saveAnalysis, loadAnalyses, type Analysis } from "@/lib/analyses"
 import JobInput from "@/components/JobInput"
 import ResultsPanel, { type KeywordResult } from "@/components/ResultsPanel"
@@ -11,6 +11,7 @@ import AnalysisHistory from "@/components/AnalysisHistory"
 import ResumeScorer, { type ResumeScore } from "@/components/ResumeScorer"
 
 export default function Home() {
+  const [user, setUser] = useState<User | null>(null)
   const [uid, setUid] = useState<string | null>(null)
   const [keywords, setKeywords] = useState<KeywordResult | null>(null)
   const [activeId, setActiveId] = useState<string | null>(null)
@@ -19,20 +20,21 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null)
   const [resumeScore, setResumeScore] = useState<ResumeScore | null>(null)
   const [submittedUrl, setSubmittedUrl] = useState<string | null>(null)
+  const [sidebarOpen, setSidebarOpen] = useState(true)
   const [jobMeta, setJobMeta] = useState<{ company: string | null; jobTitle: string | null } | null>(null)
 
-  // Anonymous auth + history load
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        setUid(user.uid)
-        const analyses = await loadAnalyses(user.uid)
+    const unsub = onAuthStateChanged(auth, async (u) => {
+      setUser(u)
+      setUid(u?.uid ?? null)
+      if (u) {
+        const analyses = await loadAnalyses(u.uid)
         setHistory(analyses)
       } else {
-        await signInAnonymously(auth)
+        setHistory([])
       }
     })
-    initAnalytics()
+    logAppEvent({ name: "app_open" })
     return unsub
   }, [])
 
@@ -40,6 +42,21 @@ export default function Home() {
     const analyses = await loadAnalyses(userId)
     setHistory(analyses)
   }, [])
+
+  const handleSignIn = async () => {
+    await signInWithPopup(auth, googleProvider)
+  }
+
+  const handleSignOut = async () => {
+    await signOut(auth)
+    setKeywords(null)
+    setActiveId(null)
+    setResumeScore(null)
+    setJobMeta(null)
+    setSubmittedUrl(null)
+    setError(null)
+    setHistory([])
+  }
 
   const handleExtract = async (payload: { jobListing?: string; url?: string }) => {
     setLoading(true)
@@ -61,24 +78,22 @@ export default function Home() {
 
       if (!res.ok) {
         setError(data.error ?? "Something went wrong. Please try again.")
+        const { source } = makeSnippet(payload)
+        logAppEvent({ name: "extract_error", source })
         return
       }
 
       const result: KeywordResult = data.keywords
       setKeywords(result)
+      const meta = data.meta ?? { company: null, jobTitle: null }
       if (data.meta) setJobMeta(data.meta)
 
-      // Persist + analytics
-      if (uid) {
-        const { snippet, source } = makeSnippet(payload)
-        const analytics = await initAnalytics()
-        if (analytics) {
-          logEvent(analytics, "extract_keywords", {
-            source,
-            keyword_count: Object.values(result).flat().length,
-          })
-        }
-        await saveAnalysis(uid, { snippet, source, keywords: result })
+      const { source } = makeSnippet(payload)
+      logAppEvent({ name: "extract_keywords", source, keyword_count: Object.values(result).flat().length })
+
+      if (uid && user) {
+        const { snippet } = makeSnippet(payload)
+        await saveAnalysis(uid, { snippet, source, keywords: result, company: meta.company, jobTitle: meta.jobTitle })
         await refreshHistory(uid)
       }
     } catch {
@@ -91,44 +106,87 @@ export default function Home() {
   const handleSelectHistory = (analysis: Analysis) => {
     setKeywords(analysis.keywords)
     setActiveId(analysis.id)
+    setJobMeta({ company: analysis.company, jobTitle: analysis.jobTitle })
+    setSubmittedUrl(analysis.source === "url" ? analysis.snippet : null)
+    setError(null)
+    setResumeScore(null)
+    logAppEvent({ name: "history_item_selected", source: analysis.source })
+  }
+
+  const logoClickHandler = () => {
+    setKeywords(null)
+    setActiveId(null)
+    setResumeScore(null)
+    setJobMeta(null)
+    setSubmittedUrl(null)
     setError(null)
   }
 
   const nav = (
     <nav
       style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 100,
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
         padding: "20px 32px",
+        flexShrink: 0,
       }}
     >
-      <span
-        onClick={() => {
-          setKeywords(null)
-          setActiveId(null)
-          setResumeScore(null)
-          setJobMeta(null)
-          setSubmittedUrl(null)
-          setError(null)
-        }}
-        style={{
-          fontFamily: "var(--font-rubik)",
-          fontSize: "22px",
-          fontWeight: 700,
-          letterSpacing: "-0.04em",
-          color: "#ffffff",
-          cursor: "pointer",
-        }}
-      >
-        tailr
-      </span>
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+      {user ? (
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <button
+            onClick={() => setSidebarOpen((o) => !o)}
+            title={sidebarOpen ? "Close sidebar" : "Open sidebar"}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              color: "rgba(255,255,255,0.5)",
+              padding: "4px",
+              transition: "color 0.15s ease",
+            }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#ffffff" }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "rgba(255,255,255,0.5)" }}
+          >
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 6h18M3 12h18M3 18h18" />
+            </svg>
+          </button>
+          {!sidebarOpen && (
+            <span
+              onClick={logoClickHandler}
+              style={{
+                fontFamily: "var(--font-rubik)",
+                fontSize: "22px",
+                fontWeight: 700,
+                letterSpacing: "-0.04em",
+                color: "#ffffff",
+                cursor: "pointer",
+              }}
+            >
+              tailr
+            </span>
+          )}
+        </div>
+      ) : (
+        <span
+          onClick={logoClickHandler}
+          style={{
+            fontFamily: "var(--font-rubik)",
+            fontSize: "22px",
+            fontWeight: 700,
+            letterSpacing: "-0.04em",
+            color: "#ffffff",
+            cursor: "pointer",
+          }}
+        >
+          tailr
+        </span>
+      )}
+      <div style={{ display: "flex", alignItems: "center", gap: "10px", marginLeft: "auto" }}>
         {(jobMeta && (jobMeta.jobTitle || jobMeta.company)) && (
           <a
             href={submittedUrl ?? undefined}
@@ -148,8 +206,6 @@ export default function Home() {
               borderRadius: "999px",
               padding: "6px 14px",
               whiteSpace: "nowrap",
-              maxWidth: "360px",
-              overflow: "hidden",
               transition: "background-color 0.15s ease, color 0.15s ease",
               cursor: submittedUrl ? "pointer" : "default",
             }}
@@ -165,7 +221,7 @@ export default function Home() {
               el.style.backgroundColor = "rgba(255,255,255,0.1)"
             }}
           >
-            <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+            <span>
               {[jobMeta.company, jobMeta.jobTitle].filter(Boolean).join(" · ")}
             </span>
             {submittedUrl && (
@@ -175,65 +231,172 @@ export default function Home() {
             )}
           </a>
         )}
+
+        {!user ? (
+          <button
+            onClick={handleSignIn}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              fontFamily: "var(--font-rubik)",
+              fontSize: "13px",
+              fontWeight: 500,
+              color: "rgba(255,255,255,0.8)",
+              backgroundColor: "rgba(255,255,255,0.08)",
+              border: "1px solid rgba(255,255,255,0.15)",
+              borderRadius: "999px",
+              padding: "6px 14px",
+              cursor: "pointer",
+              transition: "background-color 0.15s ease, color 0.15s ease",
+            }}
+            onMouseEnter={(e) => {
+              const el = e.currentTarget as HTMLButtonElement
+              el.style.backgroundColor = "rgba(255,255,255,0.14)"
+              el.style.color = "#ffffff"
+            }}
+            onMouseLeave={(e) => {
+              const el = e.currentTarget as HTMLButtonElement
+              el.style.backgroundColor = "rgba(255,255,255,0.08)"
+              el.style.color = "rgba(255,255,255,0.8)"
+            }}
+          >
+            Sign in
+          </button>
+        ) : user && (
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            backgroundColor: "rgba(255,255,255,0.08)",
+            border: "1px solid rgba(255,255,255,0.15)",
+            borderRadius: "999px",
+            padding: "6px 10px 6px 14px",
+          }}>
+{user.displayName && (
+              <span style={{
+                fontFamily: "var(--font-rubik)",
+                fontSize: "13px",
+                fontWeight: 500,
+                color: "rgba(255,255,255,0.8)",
+                whiteSpace: "nowrap",
+              }}>
+                {user.displayName}
+              </span>
+            )}
+            <button
+              onClick={handleSignOut}
+              title="Sign out"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                padding: "2px",
+                color: "rgba(255,255,255,0.3)",
+                transition: "color 0.15s ease",
+              }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "rgba(255,255,255,0.7)" }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "rgba(255,255,255,0.3)" }}
+            >
+              <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        )}
       </div>
     </nav>
   )
 
+  const sidebar = user ? (
+    <aside
+      className="app-sidebar"
+      style={{
+        width: sidebarOpen ? "240px" : "0px",
+        minWidth: 0,
+        borderRight: sidebarOpen ? "1px solid rgba(255,255,255,0.07)" : "none",
+        borderLeft: "none",
+        overflow: "hidden",
+        transition: "width 0.28s cubic-bezier(0.16, 1, 0.3, 1)",
+      }}
+    >
+      <div style={{
+        width: "240px",
+        opacity: sidebarOpen ? 1 : 0,
+        transition: "opacity 0.2s ease",
+        pointerEvents: sidebarOpen ? "auto" : "none",
+      }}>
+        <div style={{ padding: "20px 24px 8px" }}>
+          <span
+            onClick={logoClickHandler}
+            style={{
+              fontFamily: "var(--font-rubik)",
+              fontSize: "22px",
+              fontWeight: 700,
+              letterSpacing: "-0.04em",
+              color: "#ffffff",
+              cursor: "pointer",
+            }}
+          >
+            tailr
+          </span>
+        </div>
+        <AnalysisHistory analyses={history} activeId={activeId} onSelect={handleSelectHistory} />
+      </div>
+    </aside>
+  ) : null
+
   if (!keywords) {
     return (
-      <div
-        style={{
-          minHeight: "100vh",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "48px 24px",
-        }}
-      >
-        {nav}
+      <div className="app-layout">
+        {sidebar}
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+          {nav}
+          <div style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "48px 24px",
+            overflow: "auto",
+          }}>
+            {/* Title + subtitle */}
+            <div className="anim-fade-up" style={{ textAlign: "center", marginBottom: "48px" }}>
+              <h1
+                style={{
+                  fontFamily: "var(--font-rubik)",
+                  fontSize: "clamp(2.2rem, 4vw, 3.4rem)",
+                  whiteSpace: "nowrap",
+                  fontWeight: 700,
+                  letterSpacing: "-0.03em",
+                  color: "#ffffff",
+                  marginBottom: "6px",
+                }}
+              >
+                Surface what employers want
+              </h1>
+              <p
+                style={{
+                  fontFamily: "var(--font-rubik)",
+                  fontWeight: 400,
+                  fontSize: "20px",
+                  color: "rgba(255,255,255,0.65)",
+                  lineHeight: 1.6,
+                }}
+              >
+                Paste a job listing or drop in a URL. Extract the exact language that belongs on your resume.
+              </p>
+            </div>
 
-        {/* Title + subtitle */}
-        <div className="anim-fade-up" style={{ textAlign: "center", marginBottom: "48px" }}>
-          <h1
-            style={{
-              fontFamily: "var(--font-rubik)",
-              fontSize: "clamp(2.2rem, 4vw, 3.4rem)",
-              whiteSpace: "nowrap",
-              fontWeight: 700,
-              letterSpacing: "-0.03em",
-              color: "#ffffff",
-              marginBottom: "6px",
-            }}
-          >
-            Surface what employers want
-          </h1>
-          <p
-            style={{
-              fontFamily: "var(--font-rubik)",
-              fontWeight: 400,
-              fontSize: "20px",
-              color: "rgba(255,255,255,0.65)",
-              lineHeight: 1.6,
-            }}
-          >
-            Paste a job listing or drop in a URL. Extract the exact language that belongs on your resume.
-          </p>
-        </div>
-
-        {/* Form card */}
-        <div
-          className="anim-fade-up"
-          style={{ width: "100%", maxWidth: "600px" }}
-        >
-          <div
-            style={{
-              background: "#ffffff",
-              borderRadius: "14px",
-              padding: "28px",
-            }}
-          >
-            <JobInput onSubmit={handleExtract} loading={loading} error={error} />
+            {/* Form card */}
+            <div className="anim-fade-up" style={{ width: "100%", maxWidth: "600px" }}>
+              <div style={{ background: "#ffffff", borderRadius: "14px", padding: "28px" }}>
+                <JobInput onSubmit={handleExtract} loading={loading} error={error} />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -241,23 +404,26 @@ export default function Home() {
   }
 
   return (
-    <div>
-      {nav}
-    <div className="app-layout" style={{ marginTop: "64px" }}>
-      {/* Main content */}
-      <main className="app-main">
-        <div className="app-main-inner app-main-inner--results">
-          <ResultsPanel keywords={keywords} resumeScore={resumeScore} />
-        </div>
-      </main>
+    <div className="app-layout">
+      {sidebar}
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+        {nav}
+        <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
+          {/* Main content */}
+          <main className="app-main">
+            <div className="app-main-inner app-main-inner--results">
+              <ResultsPanel keywords={keywords} resumeScore={resumeScore} />
+            </div>
+          </main>
 
-      {/* Resume scorer column */}
-      <aside className="app-resume">
-        <div style={{ padding: "32px 16px 16px" }}>
-          <ResumeScorer keywords={keywords} onScore={setResumeScore} />
+          {/* Resume scorer column */}
+          <aside className="app-resume">
+            <div style={{ padding: "32px 16px 16px" }}>
+              <ResumeScorer keywords={keywords} onScore={setResumeScore} />
+            </div>
+          </aside>
         </div>
-      </aside>
-    </div>
+      </div>
     </div>
   )
 }

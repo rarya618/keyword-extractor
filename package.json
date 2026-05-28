@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.96.0",
+    "@sentry/nextjs": "^10.54.0",
     "cheerio": "^1.2.0",
     "firebase": "^12.13.0",
     "mammoth": "^1.12.0",
