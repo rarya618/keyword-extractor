@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import { KeywordResult } from "./ResultsPanel"
 import { logAppEvent } from "@/lib/analytics"
+import type { ScoredResume } from "@/lib/analyses"
 
 export interface CategoryScore {
   matched: string[]
@@ -25,6 +26,7 @@ export interface ResumeScore {
 
 interface ResumeScorerProps {
   keywords: KeywordResult
+  scoreHistory?: ScoredResume[]
   onScore?: (score: ResumeScore) => void
 }
 
@@ -53,9 +55,16 @@ const CARD_BORDER = "1px solid rgba(255,255,255,0.1)"
 const TEXT_MUTED = "rgba(237,232,221,0.5)"
 const TEXT_DIM = "rgba(237,232,221,0.35)"
 
-export default function ResumeScorer({ keywords, onScore }: ResumeScorerProps) {
+function formatScoreDate(iso: string): string {
+  const d = new Date(iso)
+  return d.toLocaleDateString(undefined, { month: "short", day: "numeric" }) +
+    " · " + d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })
+}
+
+export default function ResumeScorer({ keywords, scoreHistory = [], onScore }: ResumeScorerProps) {
   const [file, setFile] = useState<File | null>(null)
   const [score, setScore] = useState<ResumeScore | null>(null)
+  const [activeHistoryId, setActiveHistoryId] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isDragging, setIsDragging] = useState(false)
@@ -63,8 +72,15 @@ export default function ResumeScorer({ keywords, onScore }: ResumeScorerProps) {
 
   useEffect(() => {
     setFile(null)
-    setScore(null)
     setError(null)
+    if (scoreHistory.length > 0) {
+      const latest = scoreHistory[scoreHistory.length - 1]
+      setActiveHistoryId(latest.id)
+      setScore(latest.score)
+    } else {
+      setScore(null)
+      setActiveHistoryId(null)
+    }
   }, [keywords])
 
   const handleFile = (f: File) => {
@@ -300,11 +316,41 @@ export default function ResumeScorer({ keywords, onScore }: ResumeScorerProps) {
         </div>
       )}
 
+      {/* Score history selector */}
+      {!loading && scoreHistory.length > 1 && (
+        <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "16px" }}>
+          {[...scoreHistory].reverse().map((entry) => {
+            const isActive = entry.id === activeHistoryId
+            return (
+              <button
+                key={entry.id}
+                onClick={() => { setActiveHistoryId(entry.id); setScore(entry.score) }}
+                style={{
+                  fontFamily: "var(--font-rubik)",
+                  fontSize: "11px",
+                  fontWeight: 500,
+                  padding: "4px 10px",
+                  borderRadius: "999px",
+                  border: `1px solid ${isActive ? "rgba(237,232,221,0.4)" : "rgba(237,232,221,0.15)"}`,
+                  backgroundColor: isActive ? "rgba(237,232,221,0.1)" : "transparent",
+                  color: isActive ? "#ede8dd" : "rgba(237,232,221,0.45)",
+                  cursor: "pointer",
+                  transition: "all 0.15s ease",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {formatScoreDate(entry.createdAt)}
+              </button>
+            )
+          })}
+        </div>
+      )}
+
       {/* Score display */}
       {!loading && score && (
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           {/* Overall score — stacked stat */}
-          <div style={{ marginBottom: "4px", textAlign: "right" }}>
+          <div className="score-header" style={{ marginBottom: "4px", textAlign: "right" }}>
             <div
               className="anim-score"
               style={{

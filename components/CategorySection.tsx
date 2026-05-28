@@ -57,7 +57,7 @@ export default function CategorySection({
 
       {/* Card header */}
       <div
-        className="flex items-center justify-between"
+        className="category-header flex items-center justify-between"
         style={{
           padding: "16px 24px",
         }}
@@ -132,7 +132,7 @@ export default function CategorySection({
       {/* Chips */}
       <div style={{ padding: "0 24px 20px", marginTop: "-6px" }}>
         {keywords.length > 0 ? (
-          <div className="flex flex-wrap" style={{ gap: "8px" }}>
+          <div className="chips-row flex flex-wrap" style={{ gap: "8px" }}>
             {sortedKeywords.map((kw, idx) => (
               <KeywordChip
                 key={kw}

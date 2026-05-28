@@ -149,7 +149,7 @@ main {
 }
 
 .app-main-inner {
-  padding: 56px 28px 96px;
+  padding: 56px 28px 40px;
 }
 
 .app-main-inner--results {
@@ -186,6 +186,7 @@ main {
   }
 
   .app-content-row {
+    display: flex;
     flex-direction: column;
     overflow: visible;
   }
@@ -198,19 +199,20 @@ main {
     height: 100vh !important;
     z-index: 200;
     box-shadow: 4px 0 24px rgba(0,0,0,0.3);
+    background: rgb(140, 55, 60) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
   }
 
   .app-sidebar-backdrop {
     display: block !important;
   }
 
-  .app-sidebar-toggle {
-    display: none !important;
-  }
 
   .app-main {
     border-right: none;
     overflow: visible;
+    order: 1;
   }
 
   .app-main-inner {
@@ -226,6 +228,27 @@ main {
     min-width: unset;
     position: static;
     height: auto;
+    order: -1;
+  }
+
+  .score-header {
+    text-align: center !important;
+  }
+
+  .job-meta-company {
+    display: none !important;
+  }
+
+  .results-count {
+    width: 100%;
+    text-align: center;
+  }
+
+  .results-header {
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 8px;
   }
 
   .category-grid {

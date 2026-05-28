@@ -113,8 +113,8 @@ export default function ResultsPanel({ keywords, resumeScore }: ResultsPanelProp
   return (
     <div className="anim-fade-up" style={{ marginTop: "32px" }}>
       {/* Header */}
-      <div className="flex items-end justify-between" style={{ marginBottom: "24px" }}>
-        <div>
+      <div className="results-header flex items-end justify-between" style={{ marginBottom: "24px" }}>
+        <div className="results-count">
           <div
             style={{
               fontFamily: "var(--font-rubik)",

@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react"
 import { onAuthStateChanged, signInWithPopup, signOut, type User } from "firebase/auth"
 import { auth, googleProvider } from "@/lib/firebase"
 import { logAppEvent } from "@/lib/analytics"
-import { makeSnippet, saveAnalysis, loadAnalyses, type Analysis } from "@/lib/analyses"
+import { makeSnippet, saveAnalysis, addResumeScore, loadAnalyses, type Analysis } from "@/lib/analyses"
 import JobInput from "@/components/JobInput"
 import ResultsPanel, { type KeywordResult } from "@/components/ResultsPanel"
 import AnalysisHistory from "@/components/AnalysisHistory"
@@ -93,7 +93,8 @@ export default function Home() {
 
       if (uid && user) {
         const { snippet } = makeSnippet(payload)
-        await saveAnalysis(uid, { snippet, source, keywords: result, company: meta.company, jobTitle: meta.jobTitle })
+        const newId = await saveAnalysis(uid, { snippet, source, keywords: result, company: meta.company, jobTitle: meta.jobTitle })
+        setActiveId(newId)
         await refreshHistory(uid)
       }
     } catch {
@@ -109,7 +110,8 @@ export default function Home() {
     setJobMeta({ company: analysis.company, jobTitle: analysis.jobTitle })
     setSubmittedUrl(analysis.source === "url" ? analysis.snippet : null)
     setError(null)
-    setResumeScore(null)
+    const latest = analysis.resumeScores.at(-1)
+    setResumeScore(latest?.score ?? null)
     logAppEvent({ name: "history_item_selected", source: analysis.source })
   }
 
@@ -130,6 +132,8 @@ export default function Home() {
         justifyContent: "space-between",
         padding: "20px 32px",
         flexShrink: 0,
+        position: "relative",
+        zIndex: 10,
       }}
     >
       {user ? (
@@ -222,9 +226,12 @@ export default function Home() {
               el.style.backgroundColor = "rgba(255,255,255,0.1)"
             }}
           >
-            <span>
-              {[jobMeta.company, jobMeta.jobTitle].filter(Boolean).join(" · ")}
-            </span>
+            {jobMeta.company && (
+              <span className="job-meta-company">
+                {jobMeta.company}{jobMeta.jobTitle ? " · " : ""}
+              </span>
+            )}
+            {jobMeta.jobTitle && <span>{jobMeta.jobTitle}</span>}
             {submittedUrl && (
               <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} style={{ flexShrink: 0, opacity: 0.6 }}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -408,7 +415,6 @@ export default function Home() {
                 style={{
                   fontFamily: "var(--font-rubik)",
                   fontSize: "clamp(2.2rem, 4vw, 3.4rem)",
-                  whiteSpace: "nowrap",
                   fontWeight: 700,
                   letterSpacing: "-0.03em",
                   color: "#ffffff",
@@ -458,7 +464,17 @@ export default function Home() {
           {/* Resume scorer column */}
           <aside className="app-resume">
             <div style={{ padding: "32px 16px 16px" }}>
-              <ResumeScorer keywords={keywords} onScore={setResumeScore} />
+              <ResumeScorer
+                keywords={keywords}
+                scoreHistory={history.find(a => a.id === activeId)?.resumeScores ?? []}
+                onScore={async (score) => {
+                  setResumeScore(score)
+                  if (uid && user && activeId) {
+                    await addResumeScore(uid, activeId, score)
+                    await refreshHistory(uid)
+                  }
+                }}
+              />
             </div>
           </aside>
         </div>
