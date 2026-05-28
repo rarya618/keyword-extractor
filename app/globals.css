@@ -191,11 +191,21 @@ main {
   }
 
   .app-sidebar {
-    display: none;
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh !important;
+    z-index: 200;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.3);
+  }
+
+  .app-sidebar-backdrop {
+    display: block !important;
   }
 
   .app-sidebar-toggle {
-    display: none;
+    display: none !important;
   }
 
   .app-main {

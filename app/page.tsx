@@ -135,11 +135,11 @@ export default function Home() {
       {user ? (
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
           <button
-            onClick={() => setSidebarOpen((o) => !o)}
-            title={sidebarOpen ? "Close sidebar" : "Open sidebar"}
+            onClick={() => setSidebarOpen(true)}
+            title="Open sidebar"
             className="app-sidebar-toggle"
             style={{
-              display: "flex",
+              display: sidebarOpen ? "none" : "flex",
               alignItems: "center",
               justifyContent: "center",
               background: "none",
@@ -312,41 +312,79 @@ export default function Home() {
   )
 
   const sidebar = user ? (
-    <aside
-      className="app-sidebar"
-      style={{
-        width: sidebarOpen ? "240px" : "0px",
-        minWidth: 0,
-        borderRight: sidebarOpen ? "1px solid rgba(255,255,255,0.07)" : "none",
-        borderLeft: "none",
-        overflow: "hidden",
-        transition: "width 0.28s cubic-bezier(0.16, 1, 0.3, 1)",
-      }}
-    >
-      <div style={{
-        width: "240px",
-        opacity: sidebarOpen ? 1 : 0,
-        transition: "opacity 0.2s ease",
-        pointerEvents: sidebarOpen ? "auto" : "none",
-      }}>
-        <div style={{ padding: "20px 24px 8px" }}>
-          <span
-            onClick={logoClickHandler}
-            style={{
-              fontFamily: "var(--font-rubik)",
-              fontSize: "22px",
-              fontWeight: 700,
-              letterSpacing: "-0.04em",
-              color: "#ffffff",
-              cursor: "pointer",
-            }}
-          >
-            tailr
-          </span>
+    <>
+      {/* Mobile backdrop */}
+      <div
+        onClick={() => setSidebarOpen(false)}
+        style={{
+          display: "none",
+          position: "fixed",
+          inset: 0,
+          zIndex: 199,
+          background: "rgba(0,0,0,0.4)",
+          opacity: sidebarOpen ? 1 : 0,
+          pointerEvents: sidebarOpen ? "auto" : "none",
+          transition: "opacity 0.28s ease",
+        }}
+        className="app-sidebar-backdrop"
+      />
+      <aside
+        className="app-sidebar"
+        style={{
+          width: sidebarOpen ? "240px" : "0px",
+          minWidth: 0,
+          borderRight: sidebarOpen ? "1px solid rgba(255,255,255,0.07)" : "none",
+          borderLeft: "none",
+          overflow: "hidden",
+          transition: "width 0.28s cubic-bezier(0.16, 1, 0.3, 1)",
+        }}
+      >
+        <div style={{
+          width: "240px",
+          opacity: sidebarOpen ? 1 : 0,
+          transition: "opacity 0.2s ease",
+          pointerEvents: sidebarOpen ? "auto" : "none",
+        }}>
+          <div style={{ padding: "20px 16px 8px 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <span
+              onClick={logoClickHandler}
+              style={{
+                fontFamily: "var(--font-rubik)",
+                fontSize: "22px",
+                fontWeight: 700,
+                letterSpacing: "-0.04em",
+                color: "#ffffff",
+                cursor: "pointer",
+              }}
+            >
+              tailr
+            </span>
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="app-sidebar-close"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                color: "rgba(255,255,255,0.5)",
+                padding: "4px",
+                transition: "color 0.15s ease",
+              }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#ffffff" }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "rgba(255,255,255,0.5)" }}
+            >
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <AnalysisHistory analyses={history} activeId={activeId} onSelect={handleSelectHistory} />
         </div>
-        <AnalysisHistory analyses={history} activeId={activeId} onSelect={handleSelectHistory} />
-      </div>
-    </aside>
+      </aside>
+    </>
   ) : null
 
   if (!keywords) {
