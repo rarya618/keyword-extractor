@@ -113,6 +113,20 @@ main {
   overflow: hidden;
 }
 
+.app-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.app-content-row {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
 .app-sidebar {
   border-right: none;
   height: 100%;
@@ -162,20 +176,31 @@ main {
 @media (max-width: 768px) {
   .app-layout {
     flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .app-right {
+    overflow: visible;
+  }
+
+  .app-content-row {
+    flex-direction: column;
+    overflow: visible;
   }
 
   .app-sidebar {
-    width: 100%;
-    min-width: unset;
-    position: static;
-    height: auto;
-    border-right: none;
-    border-bottom: 1px solid #1e1e2a;
+    display: none;
+  }
+
+  .app-sidebar-toggle {
+    display: none;
   }
 
   .app-main {
     border-right: none;
-    border-bottom: 1px solid #1e1e2a;
+    overflow: visible;
   }
 
   .app-main-inner {

@@ -137,6 +137,7 @@ export default function Home() {
           <button
             onClick={() => setSidebarOpen((o) => !o)}
             title={sidebarOpen ? "Close sidebar" : "Open sidebar"}
+            className="app-sidebar-toggle"
             style={{
               display: "flex",
               alignItems: "center",
@@ -352,7 +353,7 @@ export default function Home() {
     return (
       <div className="app-layout">
         {sidebar}
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+        <div className="app-right">
           {nav}
           <div style={{
             flex: 1,
@@ -406,9 +407,9 @@ export default function Home() {
   return (
     <div className="app-layout">
       {sidebar}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+      <div className="app-right">
         {nav}
-        <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
+        <div className="app-content-row">
           {/* Main content */}
           <main className="app-main">
             <div className="app-main-inner app-main-inner--results">
